@@ -10,7 +10,7 @@ and repeat your experiments.
 
 
 '''
-
+import numpy as np;
 
 
 
@@ -48,16 +48,36 @@ def prepare_dataset(dataset_path):
     '''
     ##         "INSERT YOUR CODE HERE"   
     fl = open(dataset_path, "r");
-    
+    X = [];
+    y = [];
     line = fl.readline()
-    cnt = 1
+    cnt = 0
     while line:
-        print("Line {}: {}".format(cnt, line.strip()))
-        line = fl.readline()
-        cnt += 1
+        #print("Line {}: {}".format(cnt, line.strip()))
+        splitLine = line.split(",");
+        ID = splitLine[0];
+        cLabel = splitLine[1];
+        rValued = splitLine[2:];
         
+        if cLabel is 'M':
+            y.append(1);
+        else:
+            y.append(0);
+            
+        X.append(rValued);
+        
+        line = fl.readline()
+        cnt += 1;
     
+    Xret = np.array(X);
+    yret = np.array(y);
     
+#    print(Xret);
+#    print("\n");
+#    print(yret);
+#    print("------------");
+
+    return y and X;
     #raise NotImplementedError()
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -74,7 +94,8 @@ def build_NB_classifier(X_training, y_training):
 	clf : the classifier built in this function
     '''
     ##         "INSERT YOUR CODE HERE"    
-    raise NotImplementedError()
+    
+    #raise NotImplementedError()
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -129,7 +150,9 @@ def build_SVM_classifier(X_training, y_training):
 if __name__ == "__main__":
     pass
     # call your functions here
-    prepare_dataset("medical_records(1).data");
+    y_training, x_training = prepare_dataset("medical_records(1).data");
+    
+    build_NB_classifier(x_training, y_training);
     
 
 
