@@ -47,37 +47,61 @@ def prepare_dataset(dataset_path):
 	X,y
     '''
     ##         "INSERT YOUR CODE HERE"   
+    # validation in classifier
+    
     fl = open(dataset_path, "r");
-    X = [];
-    y = [];
+    line = fl.readline()
     line = fl.readline()
     cnt = 0
+    rows = [];
     while line:
-        #print("Line {}: {}".format(cnt, line.strip()))
-        splitLine = line.split(",");
-        ID = splitLine[0];
-        cLabel = splitLine[1];
-        rValued = splitLine[2:];
-        
-        if cLabel is 'M':
-            y.append(1);
-        else:
-            y.append(0);
-            
-        X.append(rValued);
-        
-        line = fl.readline()
-        cnt += 1;
+        line = fl.readline();
+        splitline = line.split(",");
+        rows.append(splitline);
+        #print(rows[cnt])
+        cnt = cnt + 1;
+       
+    rowsArr = np.array(rows)
     
-    Xret = np.array(X);
-    yret = np.array(y);
+    n = rowsArr.shape[0]
+    n9 = int(n*0.9)
+    p = np.random.permutation(n)
+    #X, y = rowsArr[:][]
     
-#    print(Xret);
-#    print("\n");
-#    print(yret);
-#    print("------------");
-
-    return y and X;
+    for x in range(n-1):
+        X = rowsArr[x][2,:];
+        print(X)
+    
+#    X = [];
+#    y = [];
+#    line = fl.readline()
+#    cnt = 0
+#    while line:
+#        #print("Line {}: {}".format(cnt, line.strip()))
+#        splitLine = line.split(",");
+#        ID = splitLine[0];
+#        cLabel = splitLine[1];
+#        rValued = splitLine[2:];
+#        
+#        if cLabel is 'M':
+#            y.append(1);
+#        else:
+#            y.append(0);
+#            
+#        X.append(rValued);
+#        
+#        line = fl.readline()
+#        cnt += 1;
+#    
+#    Xret = np.array(X);
+#    yret = np.array(y);
+#    
+##    print(Xret);
+##    print("\n");
+##    print(yret);
+##    print("------------");
+#
+#    return y and X;
     #raise NotImplementedError()
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -150,9 +174,9 @@ def build_SVM_classifier(X_training, y_training):
 if __name__ == "__main__":
     pass
     # call your functions here
-    y_training, x_training = prepare_dataset("medical_records(1).data");
-    
-    build_NB_classifier(x_training, y_training);
+    #y_training, x_training = prepare_dataset("medical_records(1).data");
+    prepare_dataset("medical_records(1).data");
+    #build_NB_classifier(x_training, y_training);
     
 
 
