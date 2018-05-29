@@ -11,11 +11,12 @@ and repeat your experiments.
 
 '''
 import numpy as np;
-import random;
+import random
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import cross_val_score
 import matplotlib.pyplot as plt
-from sklearn.naive_bayes import GuassianNB
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -64,7 +65,6 @@ def prepare_dataset(dataset_path):
        
     rowsArr = np.array(rows);
     np.random.shuffle(rowsArr);
-    print(len(rowsArr));
 
     y1 = [];
     X1 = [];
@@ -101,7 +101,7 @@ def build_NB_classifier(X_training, y_training):
     @return
 	clf : the classifier built in this function
     '''
-    ##         "INSERT YOUR CODE HERE"    
+     
     clf = GuassianNB();
     
     clf.fit(X_training, y_training);
@@ -123,8 +123,14 @@ def build_DT_classifier(X_training, y_training):
     @return
 	clf : the classifier built in this function
     '''
-    ##         "INSERT YOUR CODE HERE"    
-    raise NotImplementedError()
+    clf = DecisionTreeClassifier(random_state=0);
+    score = cross_val_score(clf, X_training, y_training, cv=10, scoring='accuracy');
+    print("this is the score for DT",score);
+    
+#    just plotting the scores
+#    plt.plot(range(1,11),score);
+#    plt.show();
+#    raise NotImplementedError()
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -138,11 +144,10 @@ def build_NN_classifier(X_training, y_training):
 
     @return
 	clf : the classifier built in this function
-    '''
-    ##         "INSERT YOUR CODE HERE"    
+    ''' 
     
+#    after range of 50 the validation accuracy almost never rises on average
     k_range = range(1, 51);
-    
     k_scores = [];
     
     for k in k_range:
@@ -169,6 +174,8 @@ def build_NN_classifier(X_training, y_training):
     score = cross_val_score(knn, X_training, y_training, cv=10, scoring='accuracy').mean();
     
     print("Cross-validated score with best K: ", score);
+    print("\nStandard Deviation of k_scores: ", np.std(k_scores));
+    print("\n");
     
     return knn;
     
@@ -201,15 +208,19 @@ if __name__ == "__main__":
     
     # build Naive Bayes classifier
     
-    # Build NN classifier
-    clf = build_NN_classifier(x_training, y_training);
+#    # Build DT classifier
+#    clf2 = build_DT_classifier(x_training, y_training);
     
-    # Training prediction error
-    training_error = 1 - clf.score(x_training, y_training);
-    print(training_error);
-    # Testing prediction error
-    testing_error = 1 - clf.score(x_test, y_test);
-    print(testing_error);
+        
+    
+    # Build NN classifier
+    clf3 = build_NN_classifier(x_training, y_training);
+#        # Training prediction error
+    training_error = 1 - clf3.score(x_training, y_training);
+    print("Training Error:",training_error);
+#        # Testing prediction error
+    testing_error = 1 - clf3.score(x_test, y_test);
+    print("Testing Error",testing_error);
     
     
     
