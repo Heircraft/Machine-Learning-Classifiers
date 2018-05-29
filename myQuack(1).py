@@ -172,6 +172,7 @@ def build_NN_classifier(X_training, y_training):
     
     return knn;
     
+#STANDARD DEVIATION DO SOMETHING HERE
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -187,7 +188,7 @@ def build_SVM_classifier(X_training, y_training):
 	clf : the classifier built in this function
     '''
     ##         "INSERT YOUR CODE HERE"    
-    # linearsvc is same as kernel=linear Go with JUST SVC HOE
+    # linearsvc is same as kernel=linear Go with JUST SVC 
     raise NotImplementedError()
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
