@@ -11,7 +11,11 @@ and repeat your experiments.
 
 '''
 import numpy as np;
-
+import random;
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import cross_val_score
+import matplotlib.pyplot as plt
+from sklearn.naive_bayes import GuassianNB
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -48,27 +52,24 @@ def prepare_dataset(dataset_path):
     '''
     ##         "INSERT YOUR CODE HERE"   
     # validation in classifier
-    
+
     fl = open(dataset_path, "r");
-    line = fl.readline()
-    line = fl.readline()
-    cnt = 0
+    
+    line = fl.readline();
     rows = [];
     while line:
-        line = fl.readline();
         splitline = line.split(",");
         rows.append(splitline);
-        #print(rows[cnt])
-        cnt = cnt + 1;
+        line = fl.readline();
        
     rowsArr = np.array(rows);
-    n = rowsArr.shape[0]
-  
-    #X, y = rowsArr[:][]
+    np.random.shuffle(rowsArr);
+    print(len(rowsArr));
+
     y1 = [];
     X1 = [];
+    n = rowsArr.shape[0];
     for x in range(n):
-        #print(x);
         X1.append(rowsArr[x][2:]);
         Y1 = rowsArr[x][1];
         if Y1 == 'M':
@@ -76,49 +77,15 @@ def prepare_dataset(dataset_path):
         else:
             y1.append(0);
      
-    y2 = np.array(y1);
-    X2 = np.array(X1)
-    n9 = int(n*0.9);
-    p = np.random.permutation(n);
-    #print(p);
-    #print(len(X2));
-    X = X2[p];
-    y = y2[p];
-    #Xtest = 
-    
-    
+    y = np.array(y1);
+    X = np.array(X1);
 
+    n9 = int(n*0.9);
+    Xtrain, Xtest = X[:n9], X[n9:];
+    ytrain, ytest = y[:n9], y[n9:];
     
-#    X = [];
-#    y = [];
-#    line = fl.readline()
-#    cnt = 0
-#    while line:
-#        #print("Line {}: {}".format(cnt, line.strip()))
-#        splitLine = line.split(",");
-#        ID = splitLine[0];
-#        cLabel = splitLine[1];
-#        rValued = splitLine[2:];
-#        
-#        if cLabel is 'M':
-#            y.append(1);
-#        else:
-#            y.append(0);
-#            
-#        X.append(rValued);
-#        
-#        line = fl.readline()
-#        cnt += 1;
-#    
-#    Xret = np.array(X);
-#    yret = np.array(y);
-#    
-##    print(Xret);
-##    print("\n");
-##    print(yret);
-##    print("------------");
-#
-#    return y and X;
+    return Xtrain, ytrain, Xtest, ytest;
+    
     #raise NotImplementedError()
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -135,6 +102,11 @@ def build_NB_classifier(X_training, y_training):
 	clf : the classifier built in this function
     '''
     ##         "INSERT YOUR CODE HERE"    
+    clf = GuassianNB();
+    
+    clf.fit(X_training, y_training);
+    
+    
     
     #raise NotImplementedError()
 
@@ -168,7 +140,38 @@ def build_NN_classifier(X_training, y_training):
 	clf : the classifier built in this function
     '''
     ##         "INSERT YOUR CODE HERE"    
-    raise NotImplementedError()
+    
+    k_range = range(1, 51);
+    
+    k_scores = [];
+    
+    for k in k_range:
+        clf = KNeighborsClassifier(n_neighbors=k);
+        scores = cross_val_score(clf, X_training, y_training, cv=10, scoring='accuracy');
+        
+        if scores.mean() >= max(k_scores + [0]):
+            best_k = k
+        
+        k_scores.append(round(scores.mean(), 5));
+    
+    plt.plot(k_range, k_scores)
+    plt.xlabel("Value of K for KNN")
+    plt.ylabel("Cross-validated accuracy")
+    plt.show();
+    
+    # best_k is the hyperparameter
+    print("Best K value = ", best_k);
+    
+    knn = KNeighborsClassifier(n_neighbors=best_k);
+    
+    knn.fit(X_training, y_training)
+    
+    score = cross_val_score(knn, X_training, y_training, cv=10, scoring='accuracy').mean();
+    
+    print("Cross-validated score with best K: ", score);
+    
+    return knn;
+    
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -184,6 +187,7 @@ def build_SVM_classifier(X_training, y_training):
 	clf : the classifier built in this function
     '''
     ##         "INSERT YOUR CODE HERE"    
+    # linearsvc is same as kernel=linear Go with JUST SVC HOE
     raise NotImplementedError()
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -191,9 +195,22 @@ def build_SVM_classifier(X_training, y_training):
 if __name__ == "__main__":
     pass
     # call your functions here
-    #y_training, x_training = prepare_dataset("medical_records(1).data");
-    prepare_dataset("medical_records(1).data");
-    #build_NB_classifier(x_training, y_training);
+    # Load the dataset and split
+    x_training, y_training, x_test, y_test = prepare_dataset("medical_records(1).data");
+    
+    # build Naive Bayes classifier
+    
+    # Build NN classifier
+    clf = build_NN_classifier(x_training, y_training);
+    
+    # Training prediction error
+    training_error = 1 - clf.score(x_training, y_training);
+    print(training_error);
+    # Testing prediction error
+    testing_error = 1 - clf.score(x_test, y_test);
+    print(testing_error);
+    
+    
     
 
 
