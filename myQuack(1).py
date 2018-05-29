@@ -61,26 +61,33 @@ def prepare_dataset(dataset_path):
         #print(rows[cnt])
         cnt = cnt + 1;
        
-    rowsArr = np.array(rows)
-    
+    rowsArr = np.array(rows);
     n = rowsArr.shape[0]
+  
+    #X, y = rowsArr[:][]
+    y1 = [];
+    X1 = [];
+    for x in range(n):
+        #print(x);
+        X1.append(rowsArr[x][2:]);
+        Y1 = rowsArr[x][1];
+        if Y1 == 'M':
+            y1.append(1);
+        else:
+            y1.append(0);
+     
+    y2 = np.array(y1);
+    X2 = np.array(X1)
     n9 = int(n*0.9);
     p = np.random.permutation(n);
-    #X, y = rowsArr[:][]
+    #print(p);
+    #print(len(X2));
+    X = X2[p];
+    y = y2[p];
+    #Xtest = 
     
-    for x in range(n-1):
-        X = rowsArr[x][2:];
-        print(rowsArr[x][1]);
-                      
-#        if (rowsArr[x][1] == M) {
-#            rowsArr[x][1] = 1;
-#        } else {
-#            rowsArr[x][1] = 0;
-#        }
     
-        y = rowsArr[x][1];
-#    print(y);           
-    print(rowsArr[x][1]);
+
     
 #    X = [];
 #    y = [];
