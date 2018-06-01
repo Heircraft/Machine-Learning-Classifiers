@@ -17,6 +17,8 @@ from sklearn.model_selection import cross_val_score
 import matplotlib.pyplot as plt
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.svm import SVC
+    
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -128,7 +130,7 @@ def build_DT_classifier(X_training, y_training):
     d_scores = [];
     
     for d in d_range:
-        clf = DecisionTreeClassifier(max_depth=d);
+        clf = DecisionTreeClassifier(max_depth =d);
         scores = cross_val_score(clf, X_training, y_training, cv=10, scoring='accuracy');
         
         if scores.mean() >= max(d_scores + [0]):
@@ -145,7 +147,7 @@ def build_DT_classifier(X_training, y_training):
     # best_d (depth) is the hyperparameter
     print("Best D value = ", best_d);
     
-    dtf = DecisionTreeClassifier(max_depth=d);
+    dtf = DecisionTreeClassifier(max_depth =d);
     
     dtf.fit(X_training, y_training)
     
@@ -221,7 +223,42 @@ def build_SVM_classifier(X_training, y_training):
     '''
     ##         "INSERT YOUR CODE HERE"    
     # linearsvc is same as kernel=linear Go with JUST SVC 
-    raise NotImplementedError()
+    
+    g_range = np.logspace(-9, 3, 13);
+    g_scores = [];
+    
+    for g in g_range:
+        clf = SVC(gamma=g);
+        scores = cross_val_score(clf, X_training, y_training, cv=10, scoring='accuracy');
+     
+        if scores.mean() >= max(g_scores + [0]):
+            best_g = g
+     
+        g_scores.append(round(scores.mean(), 5));
+     
+    plt.plot(g_range, g_scores)
+    plt.xlabel("Value of g for SVM")
+    plt.ylabel("Cross-validated SVM")
+    plt.show();
+    
+    # best_k is the hyperparameter
+    print("Best g value = ", best_g);
+    
+    svm = SVC(gamma=best_g);
+    
+    svm.fit(X_training, y_training)
+    
+    score = cross_val_score(svm, X_training, y_training, cv=10, scoring='accuracy').mean();
+     
+    print("Cross-validated score with best g: ", score);
+    print("\nStandard Deviation of g_scores: ", np.std(g_scores));
+    print("\n");
+    
+    return svm;
+    
+    
+
+    # raise NotImplementedError()
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -235,16 +272,16 @@ if __name__ == "__main__":
     #clf1 = build_NB_classifier(x_training, y_training);
     
     
-    # Build DT classifier
-    clf2 = build_DT_classifier(x_training, y_training);
-    # Training prediction error
-    training_error = 1 - clf2.score(x_training, y_training);
-    print("Training Error (DT):",training_error);
-    # Testing prediction error
-    testing_error = 1 - clf2.score(x_test, y_test);
-    print("Testing Error (DT)",testing_error);
-    
-        
+#    # Build DT classifier
+#    clf2 = build_DT_classifier(x_training, y_training);
+#    # Training prediction error
+#    training_error = 1 - clf2.score(x_training, y_training);
+#    print("Training Error (DT):",training_error);
+#    # Testing prediction error
+#    accuracy = clf2.score(x_test, y_test);
+#    testing_error = 1 - accuracy;
+#    print("Testing Error (DT)",testing_error);
+#    print("Testing accuracy (DT)", accuracy);
     
 #    # Build NN classifier
 #    clf3 = build_NN_classifier(x_training, y_training);
@@ -254,6 +291,30 @@ if __name__ == "__main__":
 #    # Testing prediction error
 #    testing_error = 1 - clf3.score(x_test, y_test);
 #    print("Testing Error(KNN)",testing_error);
+    
+    
+    
+    clf3 = build_SVM_classifier(x_training, y_training);
+    # Training prediction error
+    training_error = 1 - clf3.score(x_training, y_training);
+    print("Training Error (SVM):",training_error);
+    # Testing prediction error
+    accuracy = clf3.score(x_test, y_test);
+    testing_error = 1 - accuracy;
+    print("Testing Error (SVM)",testing_error);
+    print("Testing accuracy (SVM)", accuracy);
+    
+    
+##################################### REPORT SHIT ############################
+    
+    # error of testing vs error of validation
+    # training accuracy without hyperparameters and after tuned with hyperparameters
+    # standard deviation of scores 
+    # average out testing score 
+    # compare accuracy of all classifiers with and without hyperparameters 
+    # gamma 
+    
+
     
     
     
