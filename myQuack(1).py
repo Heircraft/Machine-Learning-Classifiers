@@ -102,11 +102,11 @@ def build_NB_classifier(X_training, y_training):
 	clf : the classifier built in this function
     '''
      
-    clf = GuassianNB();
-    
-    clf.fit(X_training, y_training);
-    
-    
+    X_training = X_training.astype(np.float)
+    clf = GaussianNB();
+    clf.fit(X_training, y_training);    
+    scores = cross_val_score(clf, X_training, y_training, cv=10, scoring='accuracy');
+    print("NB scores: ", scores) 
     
     #raise NotImplementedError()
 
@@ -123,14 +123,39 @@ def build_DT_classifier(X_training, y_training):
     @return
 	clf : the classifier built in this function
     '''
-    clf = DecisionTreeClassifier(random_state=0);
-    score = cross_val_score(clf, X_training, y_training, cv=10, scoring='accuracy');
-    print("this is the score for DT",score);
     
-#    just plotting the scores
-#    plt.plot(range(1,11),score);
-#    plt.show();
-#    raise NotImplementedError()
+    d_range = range(1, 51);
+    d_scores = [];
+    
+    for d in d_range:
+        clf = DecisionTreeClassifier(max_depth=d);
+        scores = cross_val_score(clf, X_training, y_training, cv=10, scoring='accuracy');
+        
+        if scores.mean() >= max(d_scores + [0]):
+            best_d = d;
+        
+        d_scores.append(round(scores.mean(), 5));
+        
+    
+    plt.plot(d_range, d_scores)
+    plt.xlabel("Value of D for DTT")
+    plt.ylabel("Cross-validated accuracy")
+    plt.show();
+    
+    # best_d (depth) is the hyperparameter
+    print("Best D value = ", best_d);
+    
+    dtf = DecisionTreeClassifier(max_depth=d);
+    
+    dtf.fit(X_training, y_training)
+    
+    score = cross_val_score(dtf, X_training, y_training, cv=10, scoring='accuracy').mean();
+    
+    print("Cross-validated score with best d: ", score);
+    print("\nStandard Deviation of d_scores: ", np.std(d_scores));
+    print("\n");
+    
+    return dtf;
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -207,20 +232,28 @@ if __name__ == "__main__":
     x_training, y_training, x_test, y_test = prepare_dataset("medical_records(1).data");
     
     # build Naive Bayes classifier
+    #clf1 = build_NB_classifier(x_training, y_training);
     
-#    # Build DT classifier
-#    clf2 = build_DT_classifier(x_training, y_training);
+    
+    # Build DT classifier
+    clf2 = build_DT_classifier(x_training, y_training);
+    # Training prediction error
+    training_error = 1 - clf2.score(x_training, y_training);
+    print("Training Error (DT):",training_error);
+    # Testing prediction error
+    testing_error = 1 - clf2.score(x_test, y_test);
+    print("Testing Error (DT)",testing_error);
     
         
     
-    # Build NN classifier
-    clf3 = build_NN_classifier(x_training, y_training);
-#        # Training prediction error
-    training_error = 1 - clf3.score(x_training, y_training);
-    print("Training Error:",training_error);
-#        # Testing prediction error
-    testing_error = 1 - clf3.score(x_test, y_test);
-    print("Testing Error",testing_error);
+#    # Build NN classifier
+#    clf3 = build_NN_classifier(x_training, y_training);
+#    # Training prediction error
+#    training_error = 1 - clf3.score(x_training, y_training);
+#    print("Training Error(KNN):",training_error);
+#    # Testing prediction error
+#    testing_error = 1 - clf3.score(x_test, y_test);
+#    print("Testing Error(KNN)",testing_error);
     
     
     
