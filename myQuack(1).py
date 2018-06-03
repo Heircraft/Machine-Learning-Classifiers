@@ -11,7 +11,6 @@ and repeat your experiments.
 
 '''
 import numpy as np;
-import random
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import cross_val_score
 import matplotlib.pyplot as plt
@@ -125,28 +124,32 @@ def build_DT_classifier(X_training, y_training):
 	clf : the classifier built in this function
     '''
     
-    d_range = range(1, 51);
+    d_range = range(1, 20);
     d_scores = [];
     
+    
     for d in d_range:
-        clf = DecisionTreeClassifier(max_depth =d);
+        clf = DecisionTreeClassifier(max_depth =d, random_state=20);
         scores = cross_val_score(clf, X_training, y_training, cv=10, scoring='accuracy').mean();
         
         if scores.mean() >= max(d_scores + [0]):
             best_d = d;
         
         d_scores.append(round(scores.mean(), 5));
-        
     
-    plt.plot(d_range, d_scores)
-    plt.xlabel("Value of D for DTT")
+
+    plt.scatter(d_range, d_scores)
+    z = np.polyfit(d_range, d_scores, 4)
+    p = np.poly1d(z)
+    plt.plot(d_range,p(d_range),"r--")    
+    plt.xlabel("Value of max_depth for DT")
     plt.ylabel("Cross-validated accuracy")
     plt.show();
     
     # best_d (depth) is the hyperparameter
     print("Best D value = ", best_d);
     
-    dtf = DecisionTreeClassifier(max_depth = best_d);
+    dtf = DecisionTreeClassifier(max_depth = best_d, random_state = 10);
     
     dtf.fit(X_training, y_training)
     
@@ -185,8 +188,11 @@ def build_NN_classifier(X_training, y_training):
         
         k_scores.append(round(scores.mean(), 5));
     
-    plt.plot(k_range, k_scores)
-    plt.xlabel("Value of K for KNN")
+    plt.scatter(k_range, k_scores)
+    z = np.polyfit(k_range, k_scores, 3)
+    p = np.poly1d(z)
+    plt.plot(k_range,p(k_range),"r--")    
+    plt.xlabel("Number of neighbours for KNN")
     plt.ylabel("Cross-validated accuracy")
     plt.show();
     
@@ -235,8 +241,9 @@ def build_SVM_classifier(X_training, y_training):
      
         g_scores.append(round(scores.mean(), 5));
      
-    plt.plot(g_range, g_scores)
-    plt.xlabel("Value of g for SVM")
+    plt.semilogx(g_range, g_scores, label="Training score",
+             color="darkorange", lw=2)
+    plt.xlabel("Value of gamma for SVM")
     plt.ylabel("Cross-validated SVM")
     plt.show();
     
