@@ -88,7 +88,6 @@ def prepare_dataset(dataset_path):
     
     return Xtrain, ytrain, Xtest, ytest;
     
-    #raise NotImplementedError()
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -108,7 +107,7 @@ def build_NB_classifier(X_training, y_training):
     clf = GaussianNB();
     clf.fit(X_training, y_training);    
     scores = cross_val_score(clf, X_training, y_training, cv=10, scoring='accuracy').mean();
-    print("Cross validated score (BAE): ", scores) 
+    print("Cross validated accuracy: ", scores) 
     
     return clf;
 
@@ -147,7 +146,7 @@ def build_DT_classifier(X_training, y_training):
     # best_d (depth) is the hyperparameter
     print("Best D value = ", best_d);
     
-    dtf = DecisionTreeClassifier(max_depth =d);
+    dtf = DecisionTreeClassifier(max_depth = best_d);
     
     dtf.fit(X_training, y_training)
     
@@ -276,12 +275,12 @@ if __name__ == "__main__":
     x_training_NB = x_training.astype(np.float);
     # Training prediction error
     training_error = 1 - clf.score(x_training_NB, y_training);
-    print("Training Error (BAE):",training_error);
+    print("Training Error (BAY):",training_error);
     # Testing prediction error
     accuracy = clf.score(x_test_NB, y_test);
     testing_error = 1 - clf.score(x_test_NB, y_test);
-    print("Testing error (BAE)", testing_error);
-    print("Testing accuracy (BAE)", accuracy);
+    print("Testing error (BAY)", testing_error);
+    print("Testing accuracy (BAY)", accuracy);
     print("===============================================================");
     
     # Build DT classifier
@@ -308,17 +307,17 @@ if __name__ == "__main__":
     print("Testing Error(KNN)",testing_error);
     print("===============================================================");
     
-#    # Build SVM classifier
-#    print("SUPPORT VECTOR MACHINE");
-#    clf3 = build_SVM_classifier(x_training, y_training);
-#    # Training prediction error
-#    training_error = 1 - clf3.score(x_training, y_training);
-#    print("Training Error (SVM):",training_error);
-#    # Testing prediction error
-#    accuracy = clf3.score(x_test, y_test);
-#    testing_error = 1 - accuracy;
-#    print("Testing Error (SVM)",testing_error);
-#    print("Testing accuracy (SVM)", accuracy);
+    # Build SVM classifier
+    print("SUPPORT VECTOR MACHINE");
+    clf3 = build_SVM_classifier(x_training, y_training);
+    # Training prediction error
+    training_error = 1 - clf3.score(x_training, y_training);
+    print("Training Error (SVM):",training_error);
+    # Testing prediction error
+    accuracy = clf3.score(x_test, y_test);
+    testing_error = 1 - accuracy;
+    print("Testing Error (SVM)",testing_error);
+    print("Testing accuracy (SVM)", accuracy);
     
     
 ##################################### REPORT SHIT ############################
