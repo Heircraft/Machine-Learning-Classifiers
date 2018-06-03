@@ -104,13 +104,13 @@ def build_NB_classifier(X_training, y_training):
 	clf : the classifier built in this function
     '''
      
-    X_training = X_training.astype(np.float)
+    X_training = X_training.astype(np.float);
     clf = GaussianNB();
     clf.fit(X_training, y_training);    
     scores = cross_val_score(clf, X_training, y_training, cv=10, scoring='accuracy').mean();
-    print("NB score: ", scores) 
+    print("Cross validated score (BAE): ", scores) 
     
-    #raise NotImplementedError()
+    return clf;
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -271,7 +271,17 @@ if __name__ == "__main__":
     # build Naive Bayes classifier
     print("NAIVE BAYES");
     print("===============================================================");
-    clf1 = build_NB_classifier(x_training, y_training);
+    clf = build_NB_classifier(x_training, y_training);
+    x_test_NB = x_test.astype(np.float);
+    x_training_NB = x_training.astype(np.float);
+    # Training prediction error
+    training_error = 1 - clf.score(x_training_NB, y_training);
+    print("Training Error (BAE):",training_error);
+    # Testing prediction error
+    accuracy = clf.score(x_test_NB, y_test);
+    testing_error = 1 - clf.score(x_test_NB, y_test);
+    print("Testing error (BAE)", testing_error);
+    print("Testing accuracy (BAE)", accuracy);
     print("===============================================================");
     
     # Build DT classifier
