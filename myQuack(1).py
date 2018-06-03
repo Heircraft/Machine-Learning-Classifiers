@@ -328,18 +328,4 @@ if __name__ == "__main__":
     print("Testing accuracy (SVM)", accuracy);
     print("===============================================================");
     
-##################################### REPORT SHIT ############################
-    
-    # error of testing vs error of validation
-    # training accuracy without hyperparameters and after tuned with hyperparameters
-    # standard deviation of scores 
-    # average out testing score 
-    # compare accuracy of all classifiers with and without hyperparameters 
-    # gamma 
-    
-
-    
-    
-    
-
 
